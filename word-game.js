@@ -33,7 +33,23 @@ async function init() {
             return;
         }
 
-   
+        isLoading = true;
+        
+        const res = await fetch("https://words.dev-apis.com/validate-word", {
+            method: "POST",
+            body: JSON.stringify({ word: currentGuess })
+        });
+
+        const resObj = await res.json(); 
+        const validWord = resObj.validWord; //const { validWord } = resObj;
+        
+        isLoading = false;
+
+        if (!validWord) {
+            markInvalidWord();
+            return;
+        }
+
         const guessParts = currentGuess.split("");
         const map = makeMap(wordLetters);
 
@@ -75,11 +91,14 @@ async function init() {
         letters[ANSWER_LENGTH * currentRow + currentGuess.length].innerText = "";
     }
 
+    function markInvalidWord() {
+        alert('not a valid word');
+    }
+
     document.addEventListener('keydown', function handleKeyPress (event) {
         if (done || isLoading) {
             return;
         }
-        
         
         const action = event.key;
 
